@@ -1,0 +1,1315 @@
+<!DOCTYPE html>
+<html lang="fr-CA">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Introduction à Python — Présentation du cours (2 h 15)</title>
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-surface: #1e293b;
+      --bg-elevated: #273549;
+      --bg-code: #0b1120;
+      --text-primary: #f8fafc;
+      --text-secondary: #cbd5e1;
+      --text-muted: #94a3b8;
+      --py-blue: #38bdf8;
+      --py-blue-dark: #0284c7;
+      --py-yellow: #facc15;
+      --py-yellow-soft: rgba(250, 204, 21, 0.14);
+      --py-blue-soft: rgba(56, 189, 248, 0.14);
+      --green: #4ade80;
+      --green-soft: rgba(74, 222, 128, 0.14);
+      --red: #f87171;
+      --red-soft: rgba(248, 113, 113, 0.14);
+      --purple: #c084fc;
+      --border: #334155;
+      --font-sans: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font-mono: "JetBrains Mono", "Fira Code", "SF Mono", Menlo, Consolas, monospace;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      height: 100%;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      font-family: var(--font-sans);
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Directional View Transitions (modern-web-guidance) */
+    @keyframes slide-to-left {
+      to { transform: translateX(-35px); opacity: 0; }
+    }
+    @keyframes slide-from-right {
+      from { transform: translateX(35px); opacity: 0; }
+    }
+    @keyframes slide-to-right {
+      to { transform: translateX(35px); opacity: 0; }
+    }
+    @keyframes slide-from-left {
+      from { transform: translateX(-35px); opacity: 0; }
+    }
+
+    ::view-transition-group(root) {
+      animation: 0.25s cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    html:active-view-transition-type(forward)::view-transition-old(root) {
+      animation-name: slide-to-left;
+    }
+    html:active-view-transition-type(forward)::view-transition-new(root) {
+      animation-name: slide-from-right;
+    }
+    html:active-view-transition-type(backward)::view-transition-old(root) {
+      animation-name: slide-to-right;
+    }
+    html:active-view-transition-type(backward)::view-transition-new(root) {
+      animation-name: slide-from-left;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      ::view-transition-group(root) {
+        animation: none !important;
+      }
+    }
+
+    /* Layout Shell */
+    .deck-wrapper {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 2rem;
+      background: rgba(15, 23, 42, 0.9);
+      border-bottom: 1px solid var(--border);
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      z-index: 20;
+    }
+
+    .topbar-brand {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+
+    .py-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      padding: 0.2rem 0.65rem;
+      border-radius: 999px;
+      background: var(--py-blue-soft);
+      color: var(--py-blue);
+      font-size: 0.78rem;
+      font-weight: 600;
+      border: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .py-badge.yellow {
+      background: var(--py-yellow-soft);
+      color: var(--py-yellow);
+      border-color: rgba(250, 204, 21, 0.3);
+    }
+
+    .py-badge.green {
+      background: var(--green-soft);
+      color: var(--green);
+      border-color: rgba(74, 222, 128, 0.3);
+    }
+
+    .stage {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.75rem 3.5rem;
+      overflow-y: auto;
+      position: relative;
+    }
+
+    .slide {
+      display: none;
+      width: 100%;
+      max-width: 1200px;
+      min-height: 540px;
+      flex-direction: column;
+      justify-content: center;
+      gap: 1.35rem;
+    }
+
+    .slide.active {
+      display: flex;
+    }
+
+    /* Typography */
+    .slide-kicker {
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--py-yellow);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    h1 {
+      font-size: clamp(2.4rem, 4vw, 3.5rem);
+      line-height: 1.15;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text-primary);
+    }
+
+    h2 {
+      font-size: clamp(1.75rem, 2.7vw, 2.35rem);
+      line-height: 1.2;
+      font-weight: 700;
+      letter-spacing: -0.015em;
+      color: var(--text-primary);
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      font-weight: 600;
+      color: var(--py-blue);
+      margin-bottom: 0.45rem;
+    }
+
+    p.lead {
+      font-size: 1.2rem;
+      line-height: 1.6;
+      color: var(--text-secondary);
+      max-width: 900px;
+    }
+
+    p {
+      line-height: 1.55;
+      color: var(--text-secondary);
+    }
+
+    /* Grids & Cards */
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.15rem;
+    }
+
+    .grid-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 0.85rem;
+      padding: 1.25rem 1.4rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    .card.highlight-blue {
+      border-color: rgba(56, 189, 248, 0.45);
+      background: linear-gradient(160deg, rgba(56, 189, 248, 0.08), var(--bg-surface));
+    }
+
+    .card.highlight-yellow {
+      border-color: rgba(250, 204, 21, 0.45);
+      background: linear-gradient(160deg, rgba(250, 204, 21, 0.08), var(--bg-surface));
+    }
+
+    .card.highlight-green {
+      border-color: rgba(74, 222, 128, 0.45);
+      background: linear-gradient(160deg, rgba(74, 222, 128, 0.08), var(--bg-surface));
+    }
+
+    .card.highlight-red {
+      border-color: rgba(248, 113, 113, 0.45);
+      background: linear-gradient(160deg, rgba(248, 113, 113, 0.08), var(--bg-surface));
+    }
+
+    ul.clean-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.55rem;
+    }
+
+    ul.clean-list li {
+      position: relative;
+      padding-left: 1.35rem;
+      color: var(--text-secondary);
+      line-height: 1.45;
+      font-size: 0.98rem;
+    }
+
+    ul.clean-list li::before {
+      content: "▸";
+      position: absolute;
+      left: 0;
+      color: var(--py-blue);
+      font-weight: bold;
+    }
+
+    ul.clean-list.yellow li::before {
+      color: var(--py-yellow);
+    }
+
+    ul.clean-list.red li::before {
+      content: "✕";
+      color: var(--red);
+    }
+
+    ul.clean-list.green li::before {
+      content: "✓";
+      color: var(--green);
+    }
+
+    /* Code Blocks */
+    pre {
+      background: var(--bg-code);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1rem 1.2rem;
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      line-height: 1.55;
+      color: #e2e8f0;
+      overflow-x: auto;
+    }
+
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.9em;
+      background: rgba(15, 23, 42, 0.65);
+      padding: 0.15rem 0.4rem;
+      border-radius: 0.35rem;
+      color: var(--py-blue);
+    }
+
+    pre code {
+      background: transparent;
+      padding: 0;
+      color: inherit;
+      font-size: inherit;
+    }
+
+    .kw { color: #c084fc; font-weight: 600; }
+    .fn { color: #38bdf8; }
+    .str { color: #4ade80; }
+    .num { color: #fb923c; }
+    .cmt { color: #64748b; font-style: italic; }
+    .typ { color: #facc15; }
+
+    /* Tables */
+    table.comp-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--bg-surface);
+      border-radius: 0.75rem;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      font-size: 0.94rem;
+    }
+
+    table.comp-table th,
+    table.comp-table td {
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+    }
+
+    table.comp-table th {
+      background: var(--bg-elevated);
+      color: var(--py-yellow);
+      font-weight: 600;
+    }
+
+    table.comp-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    /* Callout Banner */
+    .callout {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.85rem;
+      padding: 0.95rem 1.25rem;
+      border-radius: 0.75rem;
+      background: rgba(56, 189, 248, 0.1);
+      border-left: 4px solid var(--py-blue);
+      font-size: 0.96rem;
+      color: var(--text-secondary);
+    }
+
+    .callout.yellow {
+      background: rgba(250, 204, 21, 0.1);
+      border-left-color: var(--py-yellow);
+    }
+
+    .callout.green {
+      background: rgba(74, 222, 128, 0.1);
+      border-left-color: var(--green);
+    }
+
+    /* Pipeline diagram */
+    .pipeline {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 0.75rem;
+      margin: 0.5rem 0;
+    }
+
+    .pipeline-step {
+      flex: 1;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 0.75rem;
+      padding: 1rem;
+      text-align: center;
+    }
+
+    .pipeline-arrow {
+      font-size: 1.5rem;
+      color: var(--py-yellow);
+      font-weight: bold;
+    }
+
+    /* Speaker notes panel */
+    .notes-drawer {
+      display: none;
+      background: #090d16;
+      border-top: 2px solid var(--py-yellow);
+      padding: 0.9rem 2.5rem;
+      font-size: 0.92rem;
+      color: #e2e8f0;
+      max-height: 22vh;
+      overflow-y: auto;
+    }
+
+    .notes-drawer.visible {
+      display: block;
+    }
+
+    .notes-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--py-yellow);
+      font-weight: 700;
+      margin-bottom: 0.25rem;
+    }
+
+    /* Footer controls */
+    .bottombar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0.65rem 2rem;
+      background: rgba(15, 23, 42, 0.95);
+      border-top: 1px solid var(--border);
+      z-index: 20;
+    }
+
+    .progress-track {
+      flex: 1;
+      max-width: 360px;
+      height: 6px;
+      background: var(--bg-surface);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 0 1.5rem;
+    }
+
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--py-blue), var(--py-yellow));
+      width: 0%;
+      transition: width 0.25s ease;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    button.ctrl-btn {
+      background: var(--bg-surface);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      padding: 0.4rem 0.8rem;
+      border-radius: 0.45rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+    }
+
+    button.ctrl-btn:hover {
+      background: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    @media (max-width: 900px) {
+      .grid-2, .grid-3, .grid-4 {
+        grid-template-columns: 1fr;
+      }
+      .stage {
+        padding: 1rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="deck-wrapper">
+    <!-- Top bar -->
+    <header class="topbar">
+      <div class="topbar-brand">
+        <span class="py-badge">🐍 Python 3</span>
+        <span>Introduction à Python pour l'informatique et les TI</span>
+      </div>
+      <div id="slide-bloc-indicator" class="py-badge yellow">Bloc 1 · Présentation et philosophie</div>
+    </header>
+
+    <!-- Main Slide Stage -->
+    <main class="stage">
+
+      <!-- SLIDE 1: Titre -->
+      <section class="slide active" data-bloc="Accueil · Introduction (2 h 15)" data-notes="Bienvenue à tous ! Aujourd'hui, on découvre Python en 2 h 15. Comme vous avez déjà des bases en programmation (C#, Java ou JS), on ne perdra pas de temps à expliquer ce qu'est une boucle ou une variable : on va droit au but sur ce qui rend Python unique, ses forces, ses limites, son écosystème et comment écrire du code idiomatique directement dans Google Colab sans rien installer.">
+        <div class="slide-kicker">Formation interactive · Zéro installation</div>
+        <h1>Introduction à Python<br /><span style="color: var(--py-blue);">pour les profils TI et développement</span></h1>
+        <p class="lead">
+          Comprendre la philosophie du langage, ses forces et ses limites réelles, explorer son écosystème et maîtriser les bases par la pratique dans Google Colab.
+        </p>
+        <div class="grid-2" style="margin-top: 1rem;">
+          <div class="card highlight-yellow">
+            <h3>☁️ Zéro installation</h3>
+            <p>Tout s'exécute dans votre navigateur grâce aux carnets Google Colab.</p>
+          </div>
+          <div class="card highlight-green">
+            <h3>🎯 Objectif</h3>
+            <p>Lire, écrire et comprendre du code « pythonique » dès aujourd'hui.</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 2: Plan de la séance -->
+      <section class="slide" data-bloc="Plan de la séance (2 h 15)" data-notes="Voici notre feuille de route pour les 2 h 15. On commence par 40 minutes de vue d'ensemble (philosophie, fonctionnement interne, écosystème), puis on bascule dans Google Colab pour pratiquer avant et après la pause.">
+        <div class="slide-kicker">Feuille de route</div>
+        <h2>Plan de la séance (2 h 15)</h2>
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Bloc</th>
+              <th>Durée</th>
+              <th>Sujets abordés</th>
+              <th>Support</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. Philosophie et coulisses</strong></td>
+              <td>25 min</td>
+              <td>Origine, comparaison C#/Java/JS, typage, CPython, forces et faiblesses</td>
+              <td><span class="py-badge">Présentation</span></td>
+            </tr>
+            <tr>
+              <td><strong>2. Écosystème moderne</strong></td>
+              <td>15 min</td>
+              <td>Bibliothèque standard, PyPI, <code>pip</code>, <code>venv</code>, <code>uv</code> et cadriciels phares</td>
+              <td><span class="py-badge">Présentation</span></td>
+            </tr>
+            <tr>
+              <td><strong>3. Syntaxe et contrôle</strong></td>
+              <td>30 min</td>
+              <td>Prise en main de Colab, types, <em>f-strings</em>, conditions, boucles + Exercice 1</td>
+              <td><span class="py-badge yellow">Google Colab</span></td>
+            </tr>
+            <tr>
+              <td><strong>Pause</strong></td>
+              <td>10 min</td>
+              <td>Pause café et questions rapides</td>
+              <td>—</td>
+            </tr>
+            <tr>
+              <td><strong>4. Collections et fonctions</strong></td>
+              <td>35 min</td>
+              <td>Listes, dictionnaires, tuples, ensembles, fonctions, compréhensions + Exercice 2</td>
+              <td><span class="py-badge yellow">Google Colab</span></td>
+            </tr>
+            <tr>
+              <td><strong>5. Démonstrations « waouh »</strong></td>
+              <td>20 min</td>
+              <td>Appel d'API REST en 5 lignes, analyse de données avec Pandas et conclusion</td>
+              <td><span class="py-badge green">Colab + Conclusion</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- SLIDE 3: Origine et philosophie -->
+      <section class="slide" data-bloc="Bloc 1 · Présentation et philosophie (25 min)" data-notes="Python a été créé par Guido van Rossum à la fin des années 1980 et publié en 1991. Le nom ne vient pas du serpent, mais de la troupe d'humoristes britanniques Monty Python ! L'idée centrale de Guido : le code est lu beaucoup plus souvent qu'il n'est écrit.">
+        <div class="slide-kicker">Bloc 1 · Origine et philosophie</div>
+        <h2>Pourquoi Python a-t-il été créé ?</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Un peu d'histoire</h3>
+            <ul class="clean-list">
+              <li>Créé par <strong>Guido van Rossum</strong> aux Pays-Bas et publié en <strong>1991</strong>.</li>
+              <li>Nommé en hommage à la troupe humoristique <em>Monty Python's Flying Circus</em> (et non au reptile !).</li>
+              <li>Conçu pour combler le fossé entre les scripts shell (rapides à écrire mais limités) et le langage C (puissant mais verbeux).</li>
+              <li>Aujourd'hui piloté par la <strong>Python Software Foundation (PSF)</strong> avec une version majeure chaque année (Python 3.12 / 3.13+).</li>
+            </ul>
+          </div>
+          <div class="card highlight-yellow">
+            <h3>Le « Zen de Python » (<code>import this</code>)</h3>
+            <pre><code><span class="cmt"># Principes directeurs intégrés au langage :</span>
+<span class="str">"Ce qui est explicite vaut mieux que ce qui est implicite."</span>
+<span class="str">"Ce qui est simple vaut mieux que ce qui est complexe."</span>
+<span class="str">"La lisibilité compte."</span>
+<span class="str">"Il devrait y avoir une — et de préférence une seule —
+ façon évidente de procéder."</span></code></pre>
+            <p style="font-size: 0.9rem; margin-top: 0.4rem;">
+              <strong>Constat en TI :</strong> On passe 80 % de son temps à lire et maintenir du code existant, et 20 % à en écrire du nouveau.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 4: Comparaison C# / Java / JS -->
+      <section class="slide" data-bloc="Bloc 1 · Présentation et philosophie (25 min)" data-notes="Comme vous connaissez déjà d'autres langages, voici votre table de traduction mentale. En Python, l'indentation n'est pas esthétique : elle définit les blocs de code ! Si votre code est mal indenté, il ne s'exécute pas.">
+        <div class="slide-kicker">Bloc 1 · Repères pour développeurs</div>
+        <h2>Ce qui change par rapport à C#, Java et JavaScript</h2>
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Concept</th>
+              <th>C# / Java / JavaScript</th>
+              <th>Python 🐍</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Délimitation des blocs</strong></td>
+              <td>Accolades <code>{ ... }</code> et point-virgule <code>;</code></td>
+              <td>Deux-points <code>:</code> et <strong>indentation obligatoire</strong> (4 espaces)</td>
+            </tr>
+            <tr>
+              <td><strong>Convention de nommage</strong></td>
+              <td><code>camelCase</code> (variables/fonctions)</td>
+              <td><code>snake_case</code> (<code>calculer_total</code>, <code>utilisateur_actif</code>)</td>
+            </tr>
+            <tr>
+              <td><strong>Valeur nulle / absence</strong></td>
+              <td><code>null</code> (ou <code>undefined</code> en JS)</td>
+              <td><code>None</code> (objet unique de type <code>NoneType</code>)</td>
+            </tr>
+            <tr>
+              <td><strong>Booléens et logique</strong></td>
+              <td><code>true</code> / <code>false</code>, <code>&amp;&amp;</code>, <code>||</code>, <code>!</code></td>
+              <td><code>True</code> / <code>False</code> (majuscule !), <code>and</code>, <code>or</code>, <code>not</code></td>
+            </tr>
+            <tr>
+              <td><strong>Point d'entrée</strong></td>
+              <td>Classe + méthode <code>static void Main()</code></td>
+              <td>Exécution directe de haut en bas (aucune classe requise)</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="grid-2">
+          <pre><code><span class="cmt">// En C# / Java / JS</span>
+<span class="kw">if</span> (estActif &amp;&amp; tentatives &lt; <span class="num">3</span>) {
+    autoriserAcces();
+}</code></pre>
+          <pre><code><span class="cmt"># En Python : épuré et lisible</span>
+<span class="kw">if</span> est_actif <span class="kw">and</span> tentatives &lt; <span class="num">3</span>:
+    autoriser_acces()</code></pre>
+        </div>
+      </section>
+
+      <!-- SLIDE 5: Typage dynamique mais fort -->
+      <section class="slide" data-bloc="Bloc 1 · Présentation et philosophie (25 min)" data-notes="Attention à une confusion très fréquente : Python a un typage dynamique (pas besoin de déclarer int x = 5), mais son typage est FORT ! Contrairement à JavaScript où '5' + 5 donne '55', Python refuse de mélanger des types incompatibles sans conversion explicite.">
+        <div class="slide-kicker">Bloc 1 · Système de types</div>
+        <h2>Typage dynamique, mais <span style="color: var(--py-yellow);">fort</span> !</h2>
+        <div class="grid-2">
+          <div class="card highlight-blue">
+            <h3>1. Dynamique (le type est lié à la valeur)</h3>
+            <p>Pas besoin de déclarer le type d'une variable à l'avance. Une variable est une simple étiquette pointant vers un objet en mémoire.</p>
+            <pre><code>compteur = <span class="num">10</span>          <span class="cmt"># int</span>
+compteur = <span class="str">"dix"</span>       <span class="cmt"># str (valide !)</span></code></pre>
+          </div>
+          <div class="card highlight-red">
+            <h3>2. Fort (pas de conversion implicite piégeuse)</h3>
+            <p>Contrairement à JavaScript, Python refuse d'additionner du texte et un nombre sans conversion explicite :</p>
+            <pre><code><span class="cmt"># En JavaScript : "5" + 5  --> "55" 😱</span>
+<span class="cmt"># En Python :</span>
+resultat = <span class="str">"5"</span> + <span class="num">5</span>
+<span class="cmt"># ❌ TypeError: can only concatenate str to str</span>
+
+resultat = <span class="fn">int</span>(<span class="str">"5"</span>) + <span class="num">5</span>  <span class="cmt"># ✅ 10</span></code></pre>
+          </div>
+        </div>
+        <div class="callout green">
+          <div>
+            <strong>Nouveauté moderne — Les annotations de type (<em>type hints</em>) :</strong> Depuis Python 3.5+, on peut annoter les types pour l'autocomplétion de l'IDE et l'analyse statique (similaire à TypeScript) :
+            <code>def calculer_rabais(prix: float, taux: float = 0.15) -> float:</code>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 6: Sous le capot (CPython) -->
+      <section class="slide" data-bloc="Bloc 1 · Présentation et philosophie (25 min)" data-notes="On dit souvent que Python est un langage interprété. En réalité, comme Java ou C#, il passe par une étape de compilation en bytecode (.pyc) avant d'être exécuté par une machine virtuelle appelée CPython.">
+        <div class="slide-kicker">Bloc 1 · Architecture d'exécution</div>
+        <h2>Sous le capot : comment s'exécute Python ?</h2>
+        <div class="pipeline">
+          <div class="pipeline-step">
+            <h3 style="color: var(--py-yellow);">1. Code source</h3>
+            <p>Fichier texte <code>script.py</code> écrit par le développeur</p>
+          </div>
+          <div class="pipeline-arrow">➔</div>
+          <div class="pipeline-step">
+            <h3 style="color: var(--py-blue);">2. Compilation</h3>
+            <p>Traduction automatique en <strong>bytecode</strong> (<code>__pycache__/*.pyc</code>)</p>
+          </div>
+          <div class="pipeline-arrow">➔</div>
+          <div class="pipeline-step">
+            <h3 style="color: var(--green);">3. Machine virtuelle</h3>
+            <p>Exécution instruction par instruction par la VM <strong>CPython</strong></p>
+          </div>
+        </div>
+        <div class="grid-2" style="margin-top: 0.5rem;">
+          <div class="card">
+            <h3>Comparaison avec Java et C#</h3>
+            <ul class="clean-list">
+              <li>Comme la JVM (Java) ou le CLR (.NET), Python utilise du bytecode et un ramasse-miettes (<em>garbage collector</em>).</li>
+              <li><strong>Différence clé :</strong> CPython vérifie les types dynamiquement à l'exécution et n'avait historiquement pas de compilateur JIT par défaut (contrairement à Java/C#/V8).</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Le secret de vitesse des bibliothèques</h3>
+            <ul class="clean-list yellow">
+              <li>Pourquoi l'IA tourne-t-elle en Python si CPython est lent ?</li>
+              <li>Parce que <strong>Python sert de chef d'orchestre</strong> : quand vous appelez <code>NumPy</code> ou <code>PyTorch</code>, le calcul lourd s'exécute en <strong>C, C++ ou Rust</strong> compilé !</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 7: Les forces de Python -->
+      <section class="slide" data-bloc="Bloc 1 · Présentation et philosophie (25 min)" data-notes="Résumons les vraies forces de Python pour votre carrière en TI. C'est le langage numéro 1 pour automatiser des tâches, créer des prototypes rapides, manipuler des données et intégrer de l'intelligence artificielle.">
+        <div class="slide-kicker">Bloc 1 · Analyse critique</div>
+        <h2>Les grandes forces de Python en TI</h2>
+        <div class="grid-2">
+          <div class="card highlight-green">
+            <h3>🚀 Productivité et vélocité</h3>
+            <ul class="clean-list green">
+              <li><strong>3 à 5 fois moins de lignes de code</strong> qu'en Java ou C++ pour accomplir la même tâche.</li>
+              <li>Idéal pour le prototypage rapide, les preuves de concept (PoC) et les scripts d'automatisation.</li>
+              <li>Courbe d'apprentissage ultra-rapide pour toute l'équipe.</li>
+            </ul>
+          </div>
+          <div class="card highlight-blue">
+            <h3>🔗 Langage « de colle » universel</h3>
+            <ul class="clean-list green">
+              <li>S'interface nativement avec C, C++ et Rust.</li>
+              <li>Omniprésent sous Linux, macOS, Windows, Docker, AWS, GCP et Azure.</li>
+              <li>Incontournable en <strong>DevOps, cybersécurité, science des données et IA</strong>.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="callout">
+          <div>
+            <strong>Exemple parlant :</strong> Lire un fichier JSON, filtrer des enregistrements et envoyer une requête HTTP prend moins de 10 lignes lisibles en Python, sans aucune classe ni configuration complexe.
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 8: Les faiblesses et limites -->
+      <section class="slide" data-bloc="Bloc 1 · Présentation et philosophie (25 min)" data-notes="Un bon professionnel TI doit aussi connaître les faiblesses d'un outil. Python n'est pas la réponse à tout : il est lent sur les boucles CPU pures, gourmand en mémoire, et possède le fameux GIL.">
+        <div class="slide-kicker">Bloc 1 · Analyse critique</div>
+        <h2>Les faiblesses et limites à connaître</h2>
+        <div class="grid-2">
+          <div class="card highlight-red">
+            <h3>🐢 Performance brute et mémoire</h3>
+            <ul class="clean-list red">
+              <li><strong>Exécution plus lente :</strong> Une boucle pure en Python peut être 10x à 50x plus lente qu'en C#, Rust ou C++.</li>
+              <li><strong>Consommation mémoire :</strong> Chaque nombre ou objet en Python embarque des métadonnées lourdes.</li>
+              <li><strong>Le GIL (<em>Global Interpreter Lock</em>) :</strong> Un verrou interne empêche un processus CPython standard d'exécuter du code Python sur plusieurs cœurs CPU en même temps via des <em>threads</em>.</li>
+            </ul>
+          </div>
+          <div class="card highlight-yellow">
+            <h3>📦 Déploiement et domaines peu adaptés</h3>
+            <ul class="clean-list red">
+              <li><strong>Erreurs découvertes à l'exécution :</strong> Sans compilateur strict, une faute de frappe dans une branche rare peut planter en production (d'où l'importance des tests et de <code>mypy</code>/<code>ruff</code>).</li>
+              <li><strong>Distribution d'applications :</strong> Pas de petit binaire autonome natif ; distribuer un exécutable de bureau reste lourd.</li>
+              <li><strong>À éviter pour :</strong> Applications mobiles natives (iOS/Android), moteurs de jeux 3D lourds, systèmes embarqués temps réel.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 9: Bibliothèque standard -->
+      <section class="slide" data-bloc="Bloc 2 · L'écosystème moderne (15 min)" data-notes="Passons au bloc 2 : l'écosystème. La devise de Python est 'Batteries included' (piles incluses). Dès l'installation de base, sans rien télécharger sur Internet, vous avez accès à des dizaines de modules ultra-pratiques.">
+        <div class="slide-kicker">Bloc 2 · Écosystème Python</div>
+        <h2>Philosophie « piles incluses » (<em>batteries included</em>)</h2>
+        <p class="lead">La bibliothèque standard de Python permet d'accomplir la majorité des tâches quotidiennes sans installer de paquet externe :</p>
+        <div class="grid-3">
+          <div class="card">
+            <h3>📁 Fichiers et système</h3>
+            <ul class="clean-list">
+              <li><code>pathlib</code> : manipulation moderne des chemins de fichiers.</li>
+              <li><code>os</code> / <code>shutil</code> : variables d'environnement, copie/suppression.</li>
+              <li><code>subprocess</code> : exécuter des commandes système externes.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>🌐 Formats et réseau</h3>
+            <ul class="clean-list">
+              <li><code>json</code> / <code>csv</code> : lecture et écriture natives.</li>
+              <li><code>urllib</code> : requêtes HTTP de base.</li>
+              <li><code>sqlite3</code> : base de données SQL relationnelle embarquée !</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>🛠 Utilitaires quotidiens</h3>
+            <ul class="clean-list">
+              <li><code>datetime</code> : dates, heures et fuseaux horaires.</li>
+              <li><code>random</code> / <code>math</code> / <code>statistics</code>.</li>
+              <li><code>collections</code> / <code>itertools</code> : structures avancées.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 10: PyPI, pip, venv et uv -->
+      <section class="slide" data-bloc="Bloc 2 · L'écosystème moderne (15 min)" data-notes="Quand la bibliothèque standard ne suffit plus, on utilise PyPI (l'équivalent de NuGet en C#, Maven en Java ou npm en JS). Règle d'or absolue en Python : sur votre machine, utilisez toujours un environnement virtuel (venv) pour ne pas polluer le système !">
+        <div class="slide-kicker">Bloc 2 · Gestion des paquets</div>
+        <h2>PyPI, <code>pip</code> et les environnements virtuels</h2>
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Rôle</th>
+              <th>Équivalent JS / C# / Java</th>
+              <th>Outil standard Python</th>
+              <th>Outil moderne (2025+)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Dépôt central de paquets</strong></td>
+              <td>npmjs.com / NuGet / Maven</td>
+              <td colspan="2"><strong>PyPI</strong> (<em>Python Package Index</em> — plus de 550 000 paquets)</td>
+            </tr>
+            <tr>
+              <td><strong>Installateur de paquets</strong></td>
+              <td><code>npm install</code> / <code>dotnet add</code></td>
+              <td><code>pip install nom_paquet</code></td>
+              <td><code>uv add nom_paquet</code> (10-100x plus rapide)</td>
+            </tr>
+            <tr>
+              <td><strong>Isolation par projet</strong></td>
+              <td>Dossier <code>node_modules</code> local</td>
+              <td><code>python -m venv .venv</code></td>
+              <td><code>uv venv</code> (automatique)</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="callout yellow">
+          <div>
+            <strong>Pourquoi l'environnement virtuel (<code>.venv</code>) est-il crucial ?</strong><br />
+            Contrairement à <code>npm</code> qui installe par défaut dans le dossier du projet, <code>pip</code> installe globalement si on ne crée pas de <code>venv</code>. Dans <strong>Google Colab</strong>, l'environnement est déjà isolé et préconfiguré pour vous !
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 11: Panorama des cadriciels -->
+      <section class="slide" data-bloc="Bloc 2 · L'écosystème moderne (15 min)" data-notes="Voici les noms que vous verrez partout dans les offres d'emploi et les projets en entreprise. FastAPI est devenu la star pour créer des API REST modernes, tandis que Pandas, Polars et PyTorch dominent la donnée et l'IA.">
+        <div class="slide-kicker">Bloc 2 · Panorama de l'écosystème</div>
+        <h2>Les bibliothèques et cadriciels incontournables</h2>
+        <div class="grid-3">
+          <div class="card highlight-blue">
+            <h3>🌐 Web et API REST</h3>
+            <ul class="clean-list">
+              <li><strong>FastAPI</strong> : Le favori moderne pour créer des API ultra-rapides avec génération Swagger automatique.</li>
+              <li><strong>Django</strong> : Cadriciel complet « tout-en-un » (ORM, admin, sécurité).</li>
+              <li><strong>Flask</strong> : Micro-cadriciel léger et flexible.</li>
+            </ul>
+          </div>
+          <div class="card highlight-yellow">
+            <h3>📊 Données et IA</h3>
+            <ul class="clean-list yellow">
+              <li><strong>NumPy</strong> : Calcul matriciel haute performance.</li>
+              <li><strong>Pandas / Polars</strong> : Manipulation et analyse de tableaux de données (<em>DataFrames</em>).</li>
+              <li><strong>Scikit-learn / PyTorch</strong> : Apprentissage automatique et réseaux de neurones.</li>
+            </ul>
+          </div>
+          <div class="card highlight-green">
+            <h3>⚙️ Automatisation et TI</h3>
+            <ul class="clean-list green">
+              <li><strong>Requests / HTTPX</strong> : Clients HTTP humains et élégants.</li>
+              <li><strong>Playwright / BeautifulSoup</strong> : Automatisation de navigateur et extraction web.</li>
+              <li><strong>Pytest / Ruff</strong> : Tests unitaires express et analyseur de code ultra-rapide.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 12: Introduction à Google Colab -->
+      <section class="slide" data-bloc="Bloc 3 · Prise en main et syntaxe (30 min)" data-notes="On ouvre maintenant le carnet Google Colab de l'étudiant ! Expliquez comment exécuter une cellule avec Maj+Entrée et que les variables déclarées dans la cellule 1 restent en mémoire pour la cellule 2.">
+        <div class="slide-kicker">Bloc 3 · Environnement pratique</div>
+        <h2>Prise en main de Google Colab</h2>
+        <div class="grid-2">
+          <div class="card highlight-yellow">
+            <h3>Qu'est-ce qu'un carnet (<em>notebook</em>) Jupyter / Colab ?</h3>
+            <ul class="clean-list yellow">
+              <li>Un document interactif qui combine du <strong>texte formaté (Markdown)</strong>, du <strong>code exécutable</strong> et des <strong>résultats visuels</strong> (tableaux, graphiques).</li>
+              <li>Le code tourne sur une machine virtuelle Linux hébergée gratuitement par Google.</li>
+              <li>Les principales bibliothèques (<code>requests</code>, <code>pandas</code>, <code>matplotlib</code>) y sont déjà installées !</li>
+            </ul>
+          </div>
+          <div class="card highlight-blue">
+            <h3>Les 3 règles d'or dans Colab</h3>
+            <ul class="clean-list">
+              <li><strong>Exécuter une cellule :</strong> Cliquez sur le bouton ▶️ ou appuyez sur <code>Maj + Entrée</code> (<em>Shift + Enter</em>).</li>
+              <li><strong>Mémoire partagée :</strong> L'ordre d'exécution compte ! Une variable créée dans une cellule reste en mémoire pour les suivantes.</li>
+              <li><strong>Affichage automatique :</strong> La dernière expression d'une cellule est affichée automatiquement sans même écrire <code>print()</code>.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 13: Syntaxe de base et f-strings -->
+      <section class="slide" data-bloc="Bloc 3 · Prise en main et syntaxe (30 min)">
+        <div class="slide-kicker">Bloc 3 · Syntaxe de base <span class="py-badge yellow" style="margin-left: 0.5rem;">💻 Colab : Sections 1.1 &amp; 1.2</span></div>
+        <h2>Variables, opérateurs et <em>f-strings</em></h2>
+        <div class="grid-2">
+          <pre><code><span class="cmt"># Types de base</span>
+serveur = <span class="str">"prod-mtl-01"</span>     <span class="cmt"># str</span>
+port = <span class="num">8080</span>                 <span class="cmt"># int</span>
+charge_cpu = <span class="num">74.856</span>         <span class="cmt"># float</span>
+en_ligne = <span class="kw">True</span>             <span class="cmt"># bool</span>
+certificat_expire = <span class="kw">None</span>    <span class="cmt"># NoneType</span>
+
+<span class="cmt"># Opérateurs mathématiques particuliers</span>
+division_reelle = <span class="num">7</span> / <span class="num">2</span>     <span class="cmt"># 3.5 (toujours float !)</span>
+division_entiere = <span class="num">7</span> // <span class="num">2</span>   <span class="cmt"># 3 (quotient entier)</span>
+puissance = <span class="num">2</span> ** <span class="num">10</span>         <span class="cmt"># 1024 (2 exposant 10)</span></code></pre>
+          <div class="card highlight-green">
+            <h3>Formatage moderne avec les <em>f-strings</em></h3>
+            <p>Préfixez la chaîne par la lettre <code>f</code> pour insérer des expressions directement entre accolades <code>{ }</code> :</p>
+            <pre><code><span class="fn">print</span>(<span class="str">f"Serveur : </span>{serveur}<span class="str">:</span>{port}<span class="str">"</span>)
+<span class="cmt"># ➔ Serveur : prod-mtl-01:8080</span>
+
+<span class="cmt"># Formatage direct des décimales (.1f) :</span>
+<span class="fn">print</span>(<span class="str">f"Charge CPU : </span>{charge_cpu:.1f}<span class="str"> %"</span>)
+<span class="cmt"># ➔ Charge CPU : 74.9 %</span></code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 14: Conditions -->
+      <section class="slide" data-bloc="Bloc 3 · Prise en main et syntaxe (30 min)">
+        <div class="slide-kicker">Bloc 3 · Structures conditionnelles <span class="py-badge yellow" style="margin-left: 0.5rem;">💻 Colab : Section 1.3</span></div>
+        <h2>Conditions : <code>if</code>, <code>elif</code>, <code>else</code></h2>
+        <div class="grid-2">
+          <pre><code>code_http = <span class="num">404</span>
+
+<span class="kw">if</span> code_http == <span class="num">200</span>:
+    statut = <span class="str">"Succès"</span>
+<span class="kw">elif</span> <span class="num">400</span> &lt;= code_http &lt; <span class="num">500</span>:  <span class="cmt"># Comparaison chaînée !</span>
+    statut = <span class="str">"Erreur client"</span>
+<span class="kw">elif</span> code_http &gt;= <span class="num">500</span>:
+    statut = <span class="str">"Erreur serveur"</span>
+<span class="kw">else</span>:
+    statut = <span class="str">"Autre réponse"</span>
+
+<span class="cmt"># Opérateur ternaire sur une ligne :</span>
+alerte = <span class="str">"Critique"</span> <span class="kw">if</span> code_http &gt;= <span class="num">500</span> <span class="kw">else</span> <span class="str">"Normal"</span></code></pre>
+          <div class="card highlight-yellow">
+            <h3>Astuces « pythoniques » dans les conditions</h3>
+            <ul class="clean-list yellow">
+              <li><strong>Comparaisons chaînées :</strong> On peut écrire directement <code>0 &lt;= note &lt;= 100</code> au lieu de <code>note &gt;= 0 and note &lt;= 100</code> !</li>
+              <li><strong>Valeurs fausses (<em>falsy</em>) :</strong> <code>0</code>, <code>""</code> (chaîne vide), <code>[]</code> (liste vide), <code>{}</code> et <code>None</code> valent automatiquement <code>False</code>.</li>
+              <li>On écrit <code>if erreurs:</code> plutôt que <code>if len(erreurs) &gt; 0:</code>.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 15: Boucles -->
+      <section class="slide" data-bloc="Bloc 3 · Prise en main et syntaxe (30 min)">
+        <div class="slide-kicker">Bloc 3 · Itérations <span class="py-badge yellow" style="margin-left: 0.5rem;">💻 Colab : Sections 1.4 &amp; 1.5</span></div>
+        <h2>Les boucles <code>for</code> et <code>while</code></h2>
+        <div class="grid-2">
+          <pre><code>serveurs = [<span class="str">"web-01"</span>, <span class="str">"db-01"</span>, <span class="str">"cache-01"</span>]
+
+<span class="cmt"># 1. Parcourir directement les éléments (foreach)</span>
+<span class="kw">for</span> srv <span class="kw">in</span> serveurs:
+    <span class="fn">print</span>(<span class="str">f"Vérification de </span>{srv}<span class="str">"</span>)
+
+<span class="cmt"># 2. Obtenir l'indice ET la valeur avec enumerate()</span>
+<span class="kw">for</span> index, srv <span class="kw">in</span> <span class="fn">enumerate</span>(serveurs, start=<span class="num">1</span>):
+    <span class="fn">print</span>(<span class="str">f"#</span>{index}<span class="str"> : </span>{srv}<span class="str">"</span>)
+
+<span class="cmt"># 3. Répéter N fois avec range(debut, fin_exclue)</span>
+<span class="kw">for</span> tentative <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="num">4</span>):
+    <span class="fn">print</span>(<span class="str">f"Essai </span>{tentative}<span class="str">/3"</span>)</code></pre>
+          <div class="card highlight-green">
+            <h3>💻 Dans Google Colab : Sections 1.4 &amp; 1.5</h3>
+            <p>Dans <code>atelier_python_etudiant.ipynb</code> :</p>
+            <ul class="clean-list green">
+              <li>Exécutez les boucles et observez le résultat.</li>
+              <li><strong>Exemple 1.5 :</strong> Démonstration complète de l'analyseur de journaux serveur (découpage <code>.split("|")</code> et calculs).</li>
+              <li>☕ Pause de 10 minutes après le Bloc 3.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 16: Les 4 structures de données -->
+      <section class="slide" data-bloc="Bloc 4 · Collections et fonctions (35 min)">
+        <div class="slide-kicker">Bloc 4 · Structures de données <span class="py-badge yellow" style="margin-left: 0.5rem;">💻 Colab : Sections 2.1 &amp; 2.2</span></div>
+        <h2>Les 4 collections fondamentales</h2>
+        <table class="comp-table">
+          <thead>
+            <tr>
+              <th>Type</th>
+              <th>Syntaxe</th>
+              <th>Modifiable ?</th>
+              <th>Particularités et cas d'usage</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>Liste (<code>list</code>)</strong></td>
+              <td><code>["a", "b", "c"]</code></td>
+              <td>✅ Oui (<em>mutable</em>)</td>
+              <td>Ordonnée, accepte les doublons. Équivalent de <code>List&lt;T&gt;</code> / <code>ArrayList</code>.</td>
+            </tr>
+            <tr>
+              <td><strong>Dictionnaire (<code>dict</code>)</strong></td>
+              <td><code>{"id": 1, "nom": "Léa"}</code></td>
+              <td>✅ Oui (<em>mutable</em>)</td>
+              <td>Paires clé-valeur, recherche instantanée <em>O</em>(1). Équivalent de <code>Dictionary</code> / <code>Map</code> / Objet JSON.</td>
+            </tr>
+            <tr>
+              <td><strong>Tuple (<code>tuple</code>)</strong></td>
+              <td><code>(45.50, -73.56)</code></td>
+              <td>🔒 Non (<em>immutable</em>)</td>
+              <td>Séquence fixe et protégée (coordonnées GPS, ligne de BD, retour multiple d'une fonction).</td>
+            </tr>
+            <tr>
+              <td><strong>Ensemble (<code>set</code>)</strong></td>
+              <td><code>{"admin", "invite"}</code></td>
+              <td>✅ Oui (<em>mutable</em>)</td>
+              <td><strong>Aucun doublon</strong>, test d'appartenance ultra-rapide (<code>x in mon_set</code> en <em>O</em>(1)).</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- SLIDE 17: Slicing et Unpacking -->
+      <section class="slide" data-bloc="Bloc 4 · Collections et fonctions (35 min)">
+        <div class="slide-kicker">Bloc 4 · Manipulation élégante <span class="py-badge yellow" style="margin-left: 0.5rem;">💻 Colab : Sections 2.1 &amp; 2.2</span></div>
+        <h2>Découpage (<em>slicing</em>) et déballage (<em>unpacking</em>)</h2>
+        <div class="grid-2">
+          <div class="card">
+            <h3>1. Le découpage <code>liste[début:fin:pas]</code></h3>
+            <pre><code>octets = [<span class="num">10</span>, <span class="num">20</span>, <span class="num">30</span>, <span class="num">40</span>, <span class="num">50</span>]
+
+octets[<span class="num">0</span>]       <span class="cmt"># 10 (premier élément)</span>
+octets[-<span class="num">1</span>]      <span class="cmt"># 50 (dernier élément !)</span>
+octets[<span class="num">1</span>:<span class="num">4</span>]     <span class="cmt"># [20, 30, 40] (indice 4 exclu)</span>
+octets[:<span class="num">2</span>]      <span class="cmt"># [10, 20] (les 2 premiers)</span>
+octets[::-<span class="num">1</span>]    <span class="cmt"># [50, 40, 30, 20, 10] (inversé !)</span></code></pre>
+          </div>
+          <div class="card">
+            <h3>2. Le déballage (<em>unpacking</em>)</h3>
+            <pre><code><span class="cmt"># Assignation multiple en une ligne</span>
+hote, port, protocole = (<span class="str">"10.0.0.1"</span>, <span class="num">443</span>, <span class="str">"HTTPS"</span>)
+
+<span class="cmt"># Échanger deux variables sans variable temporaire</span>
+a, b = b, a
+
+<span class="cmt"># Parcourir clés et valeurs d'un dictionnaire</span>
+<span class="kw">for</span> cle, valeur <span class="kw">in</span> config.items():
+    <span class="fn">print</span>(<span class="str">f"</span>{cle}<span class="str"> = </span>{valeur}<span class="str">"</span>)</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 18: Fonctions -->
+      <section class="slide" data-bloc="Bloc 4 · Collections et fonctions (35 min)">
+        <div class="slide-kicker">Bloc 4 · Organisation du code <span class="py-badge yellow" style="margin-left: 0.5rem;">💻 Colab : Section 2.3</span></div>
+        <h2>Fonctions : <code>def</code>, valeurs par défaut et retour multiple</h2>
+        <div class="grid-2">
+          <pre><code><span class="kw">def</span> <span class="fn">creer_compte</span>(
+    courriel: <span class="typ">str</span>,
+    role: <span class="typ">str</span> = <span class="str">"lecteur"</span>,
+    actif: <span class="typ">bool</span> = <span class="kw">True</span>
+) -&gt; <span class="typ">dict</span>:
+    <span class="str">"""Crée et retourne un profil utilisateur."""</span>
+    <span class="kw">return</span> {
+        <span class="str">"courriel"</span>: courriel.lower(),
+        <span class="str">"role"</span>: role,
+        <span class="str">"actif"</span>: actif,
+    }
+
+<span class="cmt"># Appel par position ou par nom (keyword arguments) :</span>
+u1 = creer_compte(<span class="str">"Lea@Exemple.ca"</span>)
+u2 = creer_compte(<span class="str">"marc@ti.qc.ca"</span>, actif=<span class="kw">False</span>, role=<span class="str">"admin"</span>)</code></pre>
+          <div class="card highlight-blue">
+            <h3>Retourner plusieurs valeurs</h3>
+            <p>En Python, une fonction peut retourner un tuple qui est déballé directement par l'appelant :</p>
+            <pre><code><span class="kw">def</span> <span class="fn">analyser_latence</span>(mesures: <span class="typ">list</span>):
+    minimum = <span class="fn">min</span>(mesures)
+    maximum = <span class="fn">max</span>(mesures)
+    moyenne = <span class="fn">sum</span>(mesures) / <span class="fn">len</span>(mesures)
+    <span class="kw">return</span> minimum, maximum, moyenne
+
+mini, maxi, moy = analyser_latence([<span class="num">12</span>, <span class="num">45</span>, <span class="num">18</span>, <span class="num">25</span>])</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 19: Code Pythonique -->
+      <section class="slide" data-bloc="Bloc 4 · Collections et fonctions (35 min)">
+        <div class="slide-kicker">Bloc 4 · Idiomes Python <span class="py-badge yellow" style="margin-left: 0.5rem;">💻 Colab : Sections 2.4 &amp; 2.5</span></div>
+        <h2>Écrire du code « pythonique » (<em>Pythonic</em>)</h2>
+        <div class="grid-2">
+          <div class="card highlight-yellow">
+            <h3>1. Compréhensions de liste (<em>list comprehensions</em>)</h3>
+            <p>Remplace avantageusement <code>map()</code> / <code>filter()</code> ou LINQ :</p>
+            <pre><code>latences = [<span class="num">15</span>, <span class="num">120</span>, <span class="num">42</span>, <span class="num">250</span>, <span class="num">18</span>]
+
+<span class="cmt"># Approche classique (4 lignes) :</span>
+alertes = []
+<span class="kw">for</span> ms <span class="kw">in</span> latences:
+    <span class="kw">if</span> ms &gt; <span class="num">100</span>:
+        alertes.append(<span class="str">f"</span>{ms}<span class="str"> ms"</span>)
+
+<span class="cmt"># Approche pythonique (1 ligne) :</span>
+alertes = [<span class="str">f"</span>{ms}<span class="str"> ms"</span> <span class="kw">for</span> ms <span class="kw">in</span> latences <span class="kw">if</span> ms &gt; <span class="num">100</span>]</code></pre>
+          </div>
+          <div class="card highlight-green">
+            <h3>2. Gestion de ressources avec <code>with</code></h3>
+            <p>Équivalent du <code>using</code> en C# ou <code>try-with-resources</code> en Java — ferme automatiquement le fichier ou la connexion :</p>
+            <pre><code><span class="kw">import</span> json
+
+<span class="kw">with</span> <span class="fn">open</span>(<span class="str">"config.json"</span>, <span class="str">"r"</span>, encoding=<span class="str">"utf-8"</span>) <span class="kw">as</span> f:
+    config = json.load(f)
+<span class="cmt"># Le fichier est déjà fermé proprement ici !</span></code></pre>
+            <p style="margin-top: 0.4rem; color: var(--green); font-weight: 600;">
+              💻 Dans Colab : Exemple 2.5 sur les billets de support TI !
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 20: Démonstrations Waouh -->
+      <section class="slide" data-bloc="Bloc 5 · Démonstrations et conclusion (20 min)">
+        <div class="slide-kicker">Bloc 5 · L'effet « Waouh » en quelques lignes <span class="py-badge green" style="margin-left: 0.5rem;">💻 Colab : Bloc 3 (Démos 3.1 à 3.3)</span></div>
+        <h2>Pourquoi tout le monde adopte Python ?</h2>
+        <div class="grid-2">
+          <div class="card highlight-blue">
+            <h3>Démo 1 : Interroger une API REST JSON en direct</h3>
+            <pre><code><span class="kw">import</span> urllib.request, json
+
+url = <span class="str">"https://api.open-meteo.com/v1/forecast?latitude=45.50&amp;longitude=-73.56&amp;current_weather=true"</span>
+<span class="kw">with</span> urllib.request.urlopen(url) <span class="kw">as</span> reponse:
+    donnees = json.loads(reponse.read().decode())
+
+meteo = donnees[<span class="str">"current_weather"</span>]
+<span class="fn">print</span>(<span class="str">f"Montréal : </span>{meteo[<span class="str">'temperature'</span>]}<span class="str"> °C"</span>)</code></pre>
+          </div>
+          <div class="card highlight-yellow">
+            <h3>Démo 2 : Analyse de données avec <code>pandas</code></h3>
+            <pre><code><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+df = pd.DataFrame(billets_support)
+<span class="cmt"># Statistiques instantanées par priorité :</span>
+resume = df.groupby(<span class="str">"priorite"</span>)[<span class="str">"temps_min"</span>].mean()
+<span class="fn">print</span>(resume)
+
+<span class="cmt"># Graphique en une seule ligne :</span>
+resume.plot(kind=<span class="str">"barh"</span>, title=<span class="str">"Temps moyen (min)"</span>)</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 21: Et après le cours ? -->
+      <section class="slide" data-bloc="Bloc 5 · Démonstrations et conclusion (20 min)" data-notes="Pour ceux qui veulent installer Python sur leur ordinateur après le cours, voici la configuration recommandée en 2026 pour travailler proprement.">
+        <div class="slide-kicker">Bloc 5 · Pour aller plus loin</div>
+        <h2>Installer Python sur votre machine après le cours</h2>
+        <div class="grid-3">
+          <div class="card">
+            <h3>1. L'interpréteur</h3>
+            <ul class="clean-list">
+              <li>Télécharger <strong>Python 3.12+</strong> sur <code>python.org</code> (cocher <em>« Add Python to PATH »</em> sous Windows).</li>
+              <li>Ou utiliser le gestionnaire moderne <strong><code>uv</code></strong> (<code>astral.sh/uv</code>) qui gère Python et les paquets automatiquement.</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>2. L'éditeur de code</h3>
+            <ul class="clean-list">
+              <li><strong>VS Code</strong> avec l'extension officielle <em>Python</em> (et <em>Pylance</em> pour le typage).</li>
+              <li>Ou <strong>PyCharm</strong> (JetBrains) pour un IDE complet clé en main.</li>
+            </ul>
+          </div>
+          <div class="card highlight-green">
+            <h3>3. Les bonnes habitudes</h3>
+            <pre><code><span class="cmt"># Créer un environnement isolé</span>
+python -m venv .venv
+
+<span class="cmt"># Activer (Windows)</span>
+.venv\Scripts\activate
+
+<span class="cmt"># Activer (macOS / Linux)</span>
+source .venv/bin/activate</code></pre>
+          </div>
+        </div>
+      </section>
+
+      <!-- SLIDE 22: Conclusion -->
+      <section class="slide" data-bloc="Bloc 5 · Démonstrations et conclusion (20 min)" data-notes="Merci pour votre participation ! Vous repartez avec le cahier du participant en PDF (qui contient l'aide-mémoire C#/Java/JS vers Python) ainsi que les deux carnets Google Colab (exercices et corrigé). Place aux questions !">
+        <div class="slide-kicker">Conclusion</div>
+        <h1>Merci ! Des questions ?</h1>
+        <p class="lead">Vous disposez maintenant de toutes les bases pour automatiser vos tâches, manipuler des données et explorer l'écosystème Python.</p>
+        <div style="margin-top: 0.75rem; max-width: 720px;">
+          <div class="card highlight-yellow">
+            <h3>🔗 Ressources recommandées</h3>
+            <ul class="clean-list yellow">
+              <li>Documentation officielle francophone : <code>docs.python.org/fr/3/</code></li>
+              <li>Tutoriels approfondis : <code>realpython.com</code></li>
+              <li>Entraînement algorithmique : <code>exercism.org/tracks/python</code></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Bottom bar -->
+    <footer class="bottombar">
+      <div style="font-size: 0.85rem; color: var(--text-muted);">
+        Diapositive <strong id="slide-counter" style="color: var(--text-primary);">1 / 22</strong>
+      </div>
+      <div class="progress-track">
+        <div id="progress-bar" class="progress-bar"></div>
+      </div>
+      <div class="controls">
+        <button class="ctrl-btn" id="btn-prev" title="Diapositive précédente (Flèche gauche)">◀ Préc.</button>
+        <button class="ctrl-btn" id="btn-next" title="Diapositive suivante (Flèche droite / Espace)">Suiv. ▶</button>
+        <button class="ctrl-btn" id="btn-fs" title="Plein écran (Touche F)">⛶ Plein écran (F)</button>
+      </div>
+    </footer>
+  </div>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll('.slide'));
+    const counterEl = document.getElementById('slide-counter');
+    const progressEl = document.getElementById('progress-bar');
+    const blocIndicatorEl = document.getElementById('slide-bloc-indicator');
+
+    let currentIndex = 0;
+
+    function updateSlideDOM(newIndex) {
+      slides[currentIndex].classList.remove('active');
+      currentIndex = newIndex;
+      const activeSlide = slides[currentIndex];
+      activeSlide.classList.add('active');
+
+      counterEl.textContent = `${currentIndex + 1} / ${slides.length}`;
+      const pct = ((currentIndex + 1) / slides.length) * 100;
+      progressEl.style.width = `${pct}%`;
+
+      blocIndicatorEl.textContent = activeSlide.dataset.bloc || '';
+    }
+
+    /**
+     * Navigates to a slide with directional View Transition (modern-web-guidance)
+     */
+    function goToSlide(newIndex) {
+      if (newIndex < 0 || newIndex >= slides.length || newIndex === currentIndex) {
+        return;
+      }
+      const direction = newIndex > currentIndex ? 'forward' : 'backward';
+      const updateDOM = () => updateSlideDOM(newIndex);
+
+      if (!document.startViewTransition) {
+        updateDOM();
+        return;
+      }
+
+      try {
+        document.startViewTransition({
+          update: updateDOM,
+          types: [direction]
+        });
+      } catch {
+        document.startViewTransition(updateDOM);
+      }
+    }
+
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    }
+
+    document.getElementById('btn-prev').addEventListener('click', () => goToSlide(currentIndex - 1));
+    document.getElementById('btn-next').addEventListener('click', () => goToSlide(currentIndex + 1));
+    document.getElementById('btn-fs').addEventListener('click', toggleFullscreen);
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') {
+        e.preventDefault();
+        goToSlide(currentIndex + 1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        goToSlide(currentIndex - 1);
+      } else if (e.key === 'Home') {
+        e.preventDefault();
+        goToSlide(0);
+      } else if (e.key === 'End') {
+        e.preventDefault();
+        goToSlide(slides.length - 1);
+      } else if (e.key === 'f' || e.key === 'F') {
+        e.preventDefault();
+        toggleFullscreen();
+      }
+    });
+
+    // Initialize first slide state
+    updateSlideDOM(0);
+  </script>
+</body>
+</html>

@@ -1,0 +1,8 @@
+# Notes réservées à l'enseignant (ne pas publier)
+docs/notes_de_cours_enseignant.*
+
+# Fichiers système et caches
+.DS_Store
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
