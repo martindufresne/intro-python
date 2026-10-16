@@ -23,19 +23,6 @@ sf-intro-python/
 
 ---
 
-## ⏱ Déroulement et minutage du cours (2 h 15)
-
-| Bloc | Durée | Contenu principal | Support |
-| :--- | :---: | :--- | :--- |
-| **Bloc 1 : Présentation et philosophie** | 25 min | Histoire, philosophie, comparaison C#/Java/JS, typage dynamique mais fort, CPython, forces et limites (GIL, mémoire). | Présentation (`slides/index.html`) |
-| **Bloc 2 : L'écosystème moderne** | 15 min | Bibliothèque standard (« piles incluses »), PyPI, `pip`, environnements virtuels (`.venv`), outils modernes (`uv`, `ruff`), grands cadriciels. | Présentation (`slides/index.html`) |
-| **Bloc 3 : Syntaxe et structures de contrôle** | 30 min | Prise en main de Google Colab, types, *f-strings*, `if/elif/else`, boucles `for`/`range`/`enumerate` + **Exemple 1.5** (analyseur de journaux serveur). | Colab (Partie 1) |
-| **Pause** | 10 min | Pause café et questions informelles. | — |
-| **Bloc 4 : Collections, fonctions et idiomes** | 35 min | `list`, `dict`, `tuple`, `set`, découpage (*slicing*), déballage (*unpacking*), fonctions, compréhensions de liste + **Exemple 2.5** (billets TI). | Colab (Partie 2) |
-| **Bloc 5 : Démonstrations « waouh » et conclusion** | 20 min | Générateur de mot de passe (`secrets`), météo en direct (API REST JSON), analyse et graphique express avec `pandas`, installation locale. | Colab (Partie 3) + Conclusion |
-
----
-
 ## 🚀 Guide d'utilisation des supports
 
 ### 1. La présentation HTML (`slides/index.html`)
